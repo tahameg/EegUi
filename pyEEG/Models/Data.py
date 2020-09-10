@@ -3,6 +3,7 @@ import numpy
 import random
 import sqlite3
 import uuid
+
 def get_freq(_file):
     n_channel = len(_file.getNSamples())
     f_sampler = []
@@ -36,17 +37,87 @@ def prefilter2Dict(prefilter):
     return return_dict
 
 
+def dict2Prefilter(dict):
+    return_string = ""
+    for key, val in dict:
+        return_string += (key+":"+val+" ")
+    return return_string[0:-1]
+
+
+def makeUniqueList(input): # return a list of uniq
+    return_list = []
+    for i in input:
+        if i not in return_list:
+            return_list.append(i)
+    return return_list
+
+def getClosestIndex(array, value):
+    """
+    get index of element that is closest to the value
+    :param list:
+    :param value:
+    :return:
+    """
+    return (numpy.abs(array-value)).argmin()
+
+def makeAnnotation(tag, desc):
+    return {
+        "tag" : tag,
+        "description" : desc
+            }
+
+def makeEpoch(annotation, lower_time, upper_time, time_array):
+    """
+    make an epoch object:
+        {"low-time-idx" : float,
+         "high-time-idx" : float,
+         "annotation" : {
+                "tag" : " ",
+                "description" : " "
+                }
+            }
+    :param annotation: use makeAnnotation function for creating this
+    :param lower_time: time when the event starts
+    :param upper_time: time when the event ends
+    :param time_array: the time array
+    :return:
+    """
+    return {"low-time-idx" : getClosestIndex(time_array, lower_time),
+            "high-time-idx" : getClosestIndex(time_array, upper_time),
+            "annotation" : annotation
+            }
+
+
+
 class Dataset:
     def __init__(self, _name, _file):
-        self._id = uuid.uuid4()
-        self.name = _name
+        self.File = _file
+        self.ID = uuid.uuid4()
+        self.Name = _name
+        self.Filename = _file.file_name
         self.NChannel = _file.getNSamples()
         self.Freq = get_freq(_file)
         self.NSamples = get_n_samples(_file)
+        self.Duration = self.NSamples/self.Freq
+        self.AnnotationTags = makeUniqueList(_file.readAnnotations()[2])
+        self.Epochs = []
+        self.Time = numpy.arange(0, self.Duration, 1/self.Freq)
         self.Header = Header(_file.getHeader())
 
+    def _createAnnotations(self, descriptions):
+        return_list = []
+        for t in range(0, len(self.AnnotationTags)):
+            return_list.append(makeAnnotation(self.AnnotationTags[t], descriptions[t]))
+        return return_list
 
-
+    def createEpochs(self, descriptions):
+        annotations = self._createAnnotations(descriptions)
+        annotations_raw = self.File.readAnnotations()
+        event_num = len(annotations_raw[0])
+        for i in range(0, event_num):
+            for a in annotations:
+                if annotations_raw[2][i] == a["tag"]:
+                    self.Epochs.append(makeEpoch(a, annotations_raw[0][i], annotations_raw[0][i]+annotations_raw[1][i], self.Time))
 
 class Header:
     def __init__(self, _header_dict):
@@ -132,3 +203,18 @@ class Channel:
                 'prefilter': "HP:0HZ LP:0HZ N:0HZ",
                 'transducer': ''}
 
+    def getDict(self, sample_rate):
+        return {'label': self.label,
+                'dimension': self.dimension,
+                'sample_rate': sample_rate,
+                'physical_max': self.physical_max,
+                'physical_min': self.physical_min,
+                'digital_max': self.digital_max,
+                'digital_min': self.digital_min,
+                'prefilter': dict2Prefilter(self.prefilter),
+                'transducer': self.transducer
+                }
+
+class Signal:
+    def __init__(self, _channel, ):
+        self.channel = _channel
