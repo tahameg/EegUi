@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>EEG UI v1.0 - {{title}}</title>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../static/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="../static/css/eeg-ui.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">EEG-UI v1.0</a>
+      </div>
+    </div>
+  </nav>
+    {% block content%}{%endblock%}
+</body>
+</html>

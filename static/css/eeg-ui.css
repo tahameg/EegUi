@@ -1,0 +1,32 @@
+#welcome-message {
+  background-color: rgb(17, 40, 85);
+  margin:auto;
+  box-shadow: 0 10px 20px black, 0 0 20px black;
+  margin-top: 20vh;
+  height: 580px;
+  width: 60%;
+  padding: 3%;
+  padding-top: 3%;
+}
+
+#welcome-message #itu-logo {
+  width: 20vw;
+  margin-left: 35%;
+}
+
+
+#welcome-message #button {
+  font-size: 14pt;
+  margin-top: 6%;
+  width:33%;
+  margin-left:33%;
+  text-align:center;
+}
+
+
+#welcome-message p{
+  margin-top: 50px;
+  font-size: 13pt;
+  color: white;
+  text-align: center;
+}
