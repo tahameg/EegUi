@@ -9,6 +9,14 @@
   padding-top: 3%;
 }
 
+div.center {
+  margin:auto;
+  margin-top: 20vh;
+  height: 580px;
+  width: 60%;
+  padding: 3%;
+  padding-top: 3%;
+}
 #welcome-message #itu-logo {
   width: 20vw;
   margin-left: 35%;

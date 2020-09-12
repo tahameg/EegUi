@@ -1,4 +1,4 @@
-import pyedflib
+import pyedflib, os, pathlib
 
 
 def importEdf(path):
@@ -9,3 +9,4 @@ def importEdf(path):
         pyedflib.EdfReader(path).close()
         f = pyedflib.EdfReader(path)
     return f
+

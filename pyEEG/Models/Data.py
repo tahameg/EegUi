@@ -39,7 +39,8 @@ def prefilter2Dict(prefilter):
 
 def dict2Prefilter(dict):
     return_string = ""
-    for key, val in dict:
+    for key in dict:
+        val = str(dict[key])
         return_string += (key+":"+val+" ")
     return return_string[0:-1]
 
@@ -58,7 +59,7 @@ def getClosestIndex(array, value):
     :param value:
     :return:
     """
-    return (numpy.abs(array-value)).argmin()
+    return int((numpy.abs(array-value)).argmin())
 
 def makeAnnotation(tag, desc):
     return {
@@ -91,23 +92,27 @@ def makeEpoch(annotation, lower_time, upper_time, time_array):
 
 class Dataset:
     def __init__(self, _name, _file):
+        self.init = False # is initialized
         self.File = _file
         self.ID = uuid.uuid4()
         self.Name = _name
         self.Filename = _file.file_name
-        self.NChannel = _file.getNSamples()
+        self.NChannel = len(_file.getNSamples())
         self.Freq = get_freq(_file)
-        self.NSamples = get_n_samples(_file)
+        self.NSamples = int(get_n_samples(_file))
         self.Duration = self.NSamples/self.Freq
         self.AnnotationTags = makeUniqueList(_file.readAnnotations()[2])
+        self.Annotations = []
         self.Epochs = []
         self.Time = numpy.arange(0, self.Duration, 1/self.Freq)
         self.Header = Header(_file.getHeader())
+        self.Signals = []
 
     def _createAnnotations(self, descriptions):
         return_list = []
         for t in range(0, len(self.AnnotationTags)):
             return_list.append(makeAnnotation(self.AnnotationTags[t], descriptions[t]))
+            self.Annotations = return_list
         return return_list
 
     def createEpochs(self, descriptions):
@@ -118,6 +123,71 @@ class Dataset:
             for a in annotations:
                 if annotations_raw[2][i] == a["tag"]:
                     self.Epochs.append(makeEpoch(a, annotations_raw[0][i], annotations_raw[0][i]+annotations_raw[1][i], self.Time))
+
+    def readSignals(self):
+        for i in range(0, self.NChannel):
+            ch = Channel(i, self.File.getSignalHeader(i))
+            s = self.File.readSignal(0, 0, self.NSamples, False)
+            signal = Signal(ch, s)
+            self.Signals.append(signal)
+
+    def initialize(self, annotationDescriptions=None):
+        desc = None
+        if annotationDescriptions == None:
+            desc = self.AnnotationTags
+        else:
+            desc = annotationDescriptions
+
+        self.createEpochs(desc)
+        self.readSignals()
+        self.init = True
+
+
+    def getDict(self):
+        if self.init:
+            return_dict = {
+                "id" : str(self.ID),
+                "name" : self.Name,
+                "filename" : self.Filename,
+                "n-channel" : int(self.NChannel),
+                "n-samples" : self.NSamples,
+                "frequency" : self.Freq,
+                "duration" : self.Duration,
+                "time" : self.Time.tolist(),
+                "header" : self.Header.getDict(),
+                "annotationTags" : self.AnnotationTags,
+                "annotations" : self.Annotations,
+                "epochs" : self.Epochs,
+                "signals" : []
+            }
+            for i in self.Signals:
+                return_dict["signals"].append(i.getDict())
+        else:
+            raise Exception(" you should initialize this first")
+
+        return return_dict
+
+    def getDictNoSignal(self):
+        if self.init:
+            return_dict = {
+                "id" : str(self.ID),
+                "name" : self.Name,
+                "filename" : self.Filename,
+                "n-channel" : int(self.NChannel),
+                "n-samples" : self.NSamples,
+                "frequency" : self.Freq,
+                "duration" : self.Duration,
+                "time" : self.Time.tolist(),
+                "header" : self.Header.getDict(),
+                "annotationTags" : self.AnnotationTags,
+                "annotations" : self.Annotations,
+                "epochs" : self.Epochs,
+                "signals" : []
+            }
+        else:
+            raise Exception(" you should initialize this first")
+
+        return return_dict
 
 class Header:
     def __init__(self, _header_dict):
@@ -166,9 +236,21 @@ class Header:
                      'equipment': self.equipment,
                      'admincode': self.admincode,
                      'gender': self.gender,
-                     'startdate': self.startdate,
-                     'birthdate': self.birthdate}
+
+        }
+        try:
+            self.Header['startdate'] = self.startdate.strftime("%m/%d/%Y, %H:%M:%S")
+        except:
+            self.Header['startdate'] = str(self.startdate)
+
+        try:
+            self.Header['birthdate'] = self.birthdate.strftime("%m/%d/%Y, %H:%M:%S")
+        except:
+            self.Header['birthdate'] = str(self.birthdate)
+
         return self.Header
+
+
 
 class Channel:
     def __init__(self, _idx, _channel_dict):
@@ -179,6 +261,7 @@ class Channel:
         Header Dictionary
         """
         try:
+           self.index = _idx,
            self.label = _channel_dict["label"]
            self.dimension = _channel_dict["dimension"]
            self.physical_max = _channel_dict["physical_max"]
@@ -203,10 +286,9 @@ class Channel:
                 'prefilter': "HP:0HZ LP:0HZ N:0HZ",
                 'transducer': ''}
 
-    def getDict(self, sample_rate):
+    def getDict(self):
         return {'label': self.label,
                 'dimension': self.dimension,
-                'sample_rate': sample_rate,
                 'physical_max': self.physical_max,
                 'physical_min': self.physical_min,
                 'digital_max': self.digital_max,
@@ -216,5 +298,14 @@ class Channel:
                 }
 
 class Signal:
-    def __init__(self, _channel, ):
+    def __init__(self, _channel, _signalData):
         self.channel = _channel
+        self.signalData = _signalData
+
+    def getDict(self):
+        return {
+            "channel" : self.channel.getDict(),
+            "signalData" : self.signalData.tolist()
+        }
+
+

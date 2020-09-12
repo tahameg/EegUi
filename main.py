@@ -8,6 +8,7 @@ import os
 import datasets
 import pyedflib
 import numpy as np
+from pyEEG.Models.Data import Dataset
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -16,6 +17,9 @@ ROOT_DIR = os.path.dirname(datasets.__file__)
 FILE_NAME = "S001R03.edf"
 dataset_path = os.path.join(ROOT_DIR, FILE_NAME)
 f = pyedflib.EdfReader(dataset_path)
+d = Dataset("foo", f)
+d.initialize()
+
 sampleDeltaTime = 1/f.getSampleFrequency(0)
 print("{} ms".format(sampleDeltaTime*1000))
 signals = []
