@@ -149,8 +149,8 @@ class Dataset:
                 "id" : str(self.ID),
                 "name" : self.Name,
                 "filename" : self.Filename,
-                "n-channel" : int(self.NChannel),
-                "n-samples" : self.NSamples,
+                "n_channel" : int(self.NChannel),
+                "n_samples" : self.NSamples,
                 "frequency" : self.Freq,
                 "duration" : self.Duration,
                 "time" : self.Time.tolist(),
@@ -173,8 +173,8 @@ class Dataset:
                 "id" : str(self.ID),
                 "name" : self.Name,
                 "filename" : self.Filename,
-                "n-channel" : int(self.NChannel),
-                "n-samples" : self.NSamples,
+                "n_channel" : int(self.NChannel),
+                "n_samples" : self.NSamples,
                 "frequency" : self.Freq,
                 "duration" : self.Duration,
                 "time" : self.Time.tolist(),
@@ -184,6 +184,8 @@ class Dataset:
                 "epochs" : self.Epochs,
                 "signals" : []
             }
+            for i in self.Signals:
+                return_dict["signals"].append(i.getDictNoSignal())
         else:
             raise Exception(" you should initialize this first")
 
@@ -270,13 +272,15 @@ class Channel:
            self.digital_min = _channel_dict["digital_min"]
            self.prefilter = prefilter2Dict(_channel_dict["prefilter"])
            self.transducer = _channel_dict["transducer"]
+           self.isBad = False
         except:
             raise Exception("invalid Header file structure is given as parameter. (see Channel.getEmptyDict() for valid header dict)")
 
 
     @staticmethod
     def getEmptyDict():
-        return {'label': '',
+        return {'index' : 0,
+                'label': '',
                 'dimension': '',
                 'sample_rate': 0,
                 'physical_max': 0,
@@ -284,17 +288,21 @@ class Channel:
                 'digital_max': 0,
                 'digital_min': 0,
                 'prefilter': "HP:0HZ LP:0HZ N:0HZ",
-                'transducer': ''}
+                'transducer': '',
+                'isBad': False
+                }
 
     def getDict(self):
-        return {'label': self.label,
+        return {'index' : self.index,
+                'label': self.label,
                 'dimension': self.dimension,
                 'physical_max': self.physical_max,
                 'physical_min': self.physical_min,
                 'digital_max': self.digital_max,
                 'digital_min': self.digital_min,
                 'prefilter': dict2Prefilter(self.prefilter),
-                'transducer': self.transducer
+                'transducer': self.transducer,
+                'isBad' : self.isBad
                 }
 
 class Signal:
@@ -306,6 +314,12 @@ class Signal:
         return {
             "channel" : self.channel.getDict(),
             "signalData" : self.signalData.tolist()
+        }
+
+    def getDictNoSignal(self):
+        return {
+            "channel" : self.channel.getDict(),
+            "signalData" : []
         }
 
 
