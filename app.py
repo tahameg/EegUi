@@ -20,18 +20,20 @@ EEG-UI, <strong>Taha Mert Gökdemir</strong> tarafından, Elektrik Mühendisliğ
 @app.route('/index')
 @app.route('/welcome')
 def home():
-    if  CURRENT_ANALYSIS == None:
-        return render_template('welcome.html', title="Welcome", msg=Markup(welcome_message))
-    else:
-        return {"response" : "empty for now"}
+    return render_template('welcome.html', title="Welcome", msg=Markup(welcome_message))
 
 @app.route('/bad-req')
 def invalid():
     return redirect(url_for("home"))
 
+
+@app.route('/test')
+def test():
+    return render_template("test.html", title="test");
+
 @app.route('/file_upload')
 def file_upload():
-   return render_template('test.html', title="Yeni Analiz Yarat")
+   return render_template('fileupload.html', title="Yeni Analiz Yarat", script="data-upload.js")
 
 @app.route('/handle_file_upload', methods=["POST"])
 def handleFileUpload():
@@ -48,7 +50,7 @@ def handleFileUpload():
         file.save(file_path)
         try:
             f = FileManager.importEdf(file_path)
-            d = Data.Dataset(filename, f)
+            d = Data.Dataset(name, f)
             d.initialize()
             global CURRENT_ANALYSIS
             CURRENT_ANALYSIS = Analysis(name, d)

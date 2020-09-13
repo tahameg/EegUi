@@ -33,45 +33,114 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </div>
   </nav>
 
-  <div id="file-upload" class="center row">
-    <div class="col-12">
-      <div class="card card-secondary">
-        <div class="card-header">
-          <h3 class="card-title">EDF Dosyası Yükle</h3>
-        </div>
-        <!-- /.card-header -->
-        <!-- form start -->
-        <form id="file-upload-form" role="form" enctype="multipart/form-data">
-          <div class="card-body">
-            <div class="form-group">
-              <p><code id="name-error"></code></p>
-              <label for="data-name">Veriseti Adı</label>
-              <input type="text" class="form-control" id="data-name" placeholder="Veriseti için bir isim girin">
-            </div>
-            <div class="form-group">
-              <p><code id="file-error"></code></p>
-              <label for="InputFile">Dosya Girişi</label>
-              <div class="input-group">
-                <div class="custom-file">
-                  <input type="file" name="file" class="custom-file-input" id="InputFile"  accept=".edf, .EDF">
-                  <label class="custom-file-label" for="InputFile">Dosya Seç</label>
-                </div>
-                <div class="input-group-append">
-                  <span id="upload-button" class="input-group-text" id="upload-button">Upload</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- /.card-body -->
-
-          <div class="card-footer">
-            <button id="final-submit" class="btn btn-primary" disabled>Onayla</button>
-          </div>
-        </form>
+  <section class="content-header">
+    <div class="row" style="margin-left:15vw; margin-right:15vw;">
+      <div class="col-6">
+        <h1>Veri Setini Önizlemesi</h1>
+      </div>
+      <div class="col-6 ">
+        <h4 id="file-directory" class="float-right">home/file</h4>
       </div>
     </div>
-  </div>
+  </section>
+
+  <section class="content-body">
+    <div class="row" style="margin-left:15vw; margin-right:15vw;">
+      <div class="col-12">
+        <div class="card card-secondary">
+          <div class="card-header">
+            <h3 class="card-title">Header - Meta Veri</h3>
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th style="width:35vw">Etiket</th>
+                  <th style="width:35vw">Değer</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Technician</td>
+                  <td>
+                    <span style="width:100%" type="text" id="technician-text" value=""></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Admincode </td>
+                  <td>
+                    <span style="width:100%" type="text" id="admincode-text" value=""></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Recording Additional</td>
+                  <td>
+                    <span style="width:100%" type="text" id="record-addit-text" value=""></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Patient Name</td>
+                  <td>
+                    <span style="width:100%" type="text" id="pat-name-text" value=""></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Patient Additional</td>
+                  <td>
+                    <span style="width:100%" type="text" id="pat-addit-text" value=""></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Patient Gender</td>
+                  <td>
+                    <span style="width:100%" type="text" id="pat-gender-text" value=""></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Patient Birthdate</td>
+                  <td>
+                    <span style="width:100%" type="text" id="birthdate-text" value=""></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Start Date</td>
+                  <td>
+                    <span style="width:100%" type="text" id="startdate-text" value=""></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card card-secondary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">
+              Kanal Bilgisi
+            </h3>
+          </div>
+          <div class="card-body card">
+            <h4>Veri Kanalları</h4>
+            <ul class="nav nav-tabs" id="channel-tabs" role="tablist">
+
+            </ul>
+            <div class="tab-content" id="channel-contents">
+            </div>
+            <div class="tab-custom-content ">
+              <p class="lead mb-0">Açıklama</p>
+              EEG sinyalleri, sinyalin toplandığı kanala göre sınıflandırılmıştır. Kanallar genellikle 10-20 sistemindeki kodlar ile isimlendirilir. Bu isimler
+              toplanan verinin beynin hangi bölümünden toplandığını belirtir. Topografik harita ile görüntüleme yapabilmek için her kanalı doğru şekilde isimlendirin. Bunun için her
+              kanalın bulunduğu sekmeye giderek o kanal için düzeltilmiş isim kodunu seçmelisiniz.
+              <img src="../static/img/10-20.png" style="margin : 20px 12vw; width:40vw;" />
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
 
   <!-- jQuery -->
   <script src="../static/dist/plugins/jquery/jquery.min.js"></script>
@@ -80,9 +149,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- AdminLTE -->
   <link rel="stylesheet" href="../static/dist/css/adminlte.min.css">
   <!-- eeg-ui -->
-  <script src="../static/js/data-upload.js" ></script>
+  <script src="../static/js/data-upload.js"></script>
   <!-- OPTIONAL SCRIPTS -->
-  <script src = "../static/dist/plugins/chart.js/Chart.min.js" ></script>
+  <script src="../static/dist/plugins/chart.js/Chart.min.js"></script>
   <script src="../static/dist/js/demo.js"></script>
   <script src="../static/dist/js/pages/dashboard3.js"></script>
 </body>

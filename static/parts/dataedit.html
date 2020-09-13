@@ -1,0 +1,175 @@
+<section class="content-header">
+  <div class="row" style="margin-left:15vw; margin-right:15vw;">
+    <div class="col-6">
+      <h1>Veri Seti Ön İzlemesi</h1>
+    </div>
+    <div class="col-6 ">
+      <h4 id="file-directory" class="float-right">home/file</h4>
+    </div>
+  </div>
+</section>
+
+<section class="content-body">
+  <div class="row" style="margin-left:15vw; margin-right:15vw;">
+    <div class="col-12">
+      <div class="card card-secondary">
+        <div class="card-header">
+          <h3 class="card-title">Veriseti Bilgisi</h3>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th style="width:35vw">Etiket</th>
+                <th style="width:35vw">Değer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ID</strong></td>
+                <td>
+                  <span style="width:100%" type="text" id="id" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Veriseti Adı </td>
+                <td>
+                  <span style="width:100%" type="text" id="name" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Dosya Adı</td>
+                <td>
+                  <span style="width:100%" type="text" id="filename" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Kanal Sayısı</td>
+                <td>
+                  <span style="width:100%" type="text" id="n-channel" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Kanal Başına Örnekleme Sayısı</td>
+                <td>
+                  <span style="width:100%" type="text" id="n-samples" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Ölçüm Frekansı</td>
+                <td>
+                  <span style="width:100%" type="text" id="frequency" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Ölçüm Süresi</td>
+                <td>
+                  <span style="width:100%" type="text" id="duration" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Olaylar</td>
+                <td>
+                  <span style="width:100%" type="text" id="annotationTags" value=""></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card card-secondary">
+        <div class="card-header">
+          <h3 class="card-title">Header - Meta Veri</h3>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th style="width:35vw">Etiket</th>
+                <th style="width:35vw">Değer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Technician</td>
+                <td>
+                  <span style="width:100%" type="text" id="technician-text" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Admincode </td>
+                <td>
+                  <span style="width:100%" type="text" id="admincode-text" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Recording Additional</td>
+                <td>
+                  <span style="width:100%" type="text" id="record-addit-text" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Patient Name</td>
+                <td>
+                  <span style="width:100%" type="text" id="pat-name-text" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Patient Additional</td>
+                <td>
+                  <span style="width:100%" type="text" id="pat-addit-text" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Patient Gender</td>
+                <td>
+                  <span style="width:100%" type="text" id="pat-gender-text" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Patient Birthdate</td>
+                <td>
+                  <span style="width:100%" type="text" id="startdate-text" value=""></span>
+                </td>
+              </tr>
+              <tr>
+                <td>Start Date</td>
+                <td>
+                  <span style="width:100%" type="text" id="startdate-text" value=""></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card card-secondary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">
+            Kanal Verisi
+          </h3>
+        </div>
+        <div class="card-body card">
+          <h4>Kanallar</h4>
+          <ul class="nav nav-tabs" id="channel-tabs" role="tablist">
+
+
+          </ul>
+          <div class="tab-content" id="channel-contents">
+          </div>
+          <div class="tab-custom-content ">
+            <p class="lead mb-0">Açıklama</p>
+            EEG sinyalleri, sinyalin toplandığı kanala göre sınıflandırılmıştır. Kanallar genellikle 10-20 sistemindeki kodlar ile isimlendirilir. Bu isimler
+            toplanan verinin beynin hangi bölümünden toplandığını belirtir. Topografik harita ile görüntüleme yapabilmek için her kanalı doğru şekilde isimlendirin. Bunun için her
+            kanalın bulunduğu sekmeye giderek o kanal için düzeltilmiş isim kodunu seçmelisiniz.
+            <img src="../static/img/10-20.png" style="margin : 20px 12vw; width:40vw;" />
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
