@@ -1,6 +1,20 @@
 $(document).ready(function() {
-  var tabPrefix = "channel-tab-"
-  var contentPrefix = "channel-content-"
+  var tabPrefix = "channel-tab-";
+  var contentPrefix = "channel-content-";
+  var theData = null;// bu değişken daha sonra sayfadaki değişikliklerle güncellenecek ve
+  //ve server bu veriye göre kendisini güncelleyecek
+  $("#confirm-button").click(function() {
+    $.ajax({
+      url: '/workbench',
+      success: function(result) {
+        console.log("I did my job!");
+      },
+      async: false
+    });
+  });
+
+
+
   $("#file-upload-form").find("#upload-button").click(function() {
     var form = $("#file-upload-form");
     var name = form.find("#data-name").val();
@@ -23,9 +37,9 @@ $(document).ready(function() {
       contentType: false,
       cache: false,
       success: function(data) {
+        theData = data;
         if (data.result == "success") {
           renderDataView(data.custom);
-
         } else {
           console.log(data.msg);
         }
@@ -47,7 +61,7 @@ $(document).ready(function() {
 
   });
 
-  var renderDataView = function(analysisData){//data.custom alır
+  var renderDataView = function(analysisData) { //data.custom alır
     $("#file-upload").remove();
     $.get("../static/parts/dataedit.html", function(html_data) {
       $("body").append(html_data);
@@ -58,8 +72,8 @@ $(document).ready(function() {
       $("#n-samples").text(analysisData.n_samples);
       $("#frequency").text(analysisData.frequency);
       $("#duration").text(analysisData.duration);
-      for(var i = 0; i < analysisData.annotationTags.length; i++){
-        if(i != analysisData.annotationTags.length - 1)
+      for (var i = 0; i < analysisData.annotationTags.length; i++) {
+        if (i != analysisData.annotationTags.length - 1)
           $("#annotationTags").append(analysisData.annotationTags[i] + " : ");
         else
           $("#annotationTags").append(analysisData.annotationTags[i]);
@@ -75,10 +89,10 @@ $(document).ready(function() {
       $("#pat-gender-text").text(analysisData.header.gender);
       $("#birthdate-text").text(analysisData.header.birthdate);
       $("#startdate-text").text(analysisData.header.startdate);
-        $.ajax({
+      $.ajax({
         url: '../static/parts/channelinfo.html',
         success: function(result) {
-            renderChannels(analysisData, result);
+          renderChannels(analysisData, result);
         },
         async: false
       });

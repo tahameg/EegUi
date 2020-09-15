@@ -3,6 +3,7 @@ import numpy
 import random
 import sqlite3
 import uuid
+from scipy.signal import butter, filtfilt, stft
 
 def get_freq(_file):
     n_channel = len(_file.getNSamples())
@@ -14,6 +15,7 @@ def get_freq(_file):
             raise Exception("Invalid Data: All channels must be recorded with the same frequency!")
         else:
             return f_sampler[i]
+
 
 
 def get_n_samples(_file):
@@ -70,8 +72,8 @@ def makeAnnotation(tag, desc):
 def makeEpoch(annotation, lower_time, upper_time, time_array):
     """
     make an epoch object:
-        {"low-time-idx" : float,
-         "high-time-idx" : float,
+        {"low-time-idx" : int,
+         "high-time-idx" : int,
          "annotation" : {
                 "tag" : " ",
                 "description" : " "
@@ -83,15 +85,15 @@ def makeEpoch(annotation, lower_time, upper_time, time_array):
     :param time_array: the time array
     :return:
     """
-    return {"low-time-idx" : getClosestIndex(time_array, lower_time),
-            "high-time-idx" : getClosestIndex(time_array, upper_time),
+    return {"low_time_idx" : getClosestIndex(time_array, lower_time),
+            "high_time_idx" : getClosestIndex(time_array, upper_time),
             "annotation" : annotation
             }
 
 
 
 class Dataset:
-    def __init__(self, _name, _file):
+    def __init__(self,_file, _name="default") :
         self.init = False # is initialized
         self.File = _file
         self.ID = uuid.uuid4()
@@ -105,6 +107,7 @@ class Dataset:
         self.Annotations = []
         self.Epochs = []
         self.Time = numpy.arange(0, self.Duration, 1/self.Freq)
+        self.Freqs = numpy.linspace(0, self.Freq, self.NSamples)[:self.NSamples//2]
         self.Header = Header(_file.getHeader())
         self.Signals = []
 
@@ -127,7 +130,7 @@ class Dataset:
     def readSignals(self):
         for i in range(0, self.NChannel):
             ch = Channel(i, self.File.getSignalHeader(i))
-            s = self.File.readSignal(0, 0, self.NSamples, False)
+            s = self.File.readSignal(i, 0, self.NSamples, False)
             signal = Signal(ch, s)
             self.Signals.append(signal)
 
@@ -140,8 +143,47 @@ class Dataset:
 
         self.createEpochs(desc)
         self.readSignals()
+        self.fft()
+        self.stft()
         self.init = True
 
+    def low_pass_filter(self, cutoff, order=3):
+        if self.init == True :
+            T = self.Duration
+            fs = self.Freq
+            nyq = 0.5*fs
+            n = self.NSamples
+            normal_cutoff = cutoff / nyq
+            b, a = butter(order, normal_cutoff, btype='low', analog=False)
+            for i in self.Signals:
+                y = filtfilt(b, a, i.signalData)
+                i.channel.prefilter["LP"] = cutoff
+                i.signalData = y
+            self.fft()
+            self.stft()
+    def high_pass_filter(self, cutoff, order):
+            T = self.Duration
+            fs = self.Freq
+            nyq = 0.5*fs
+            n = self.NSamples
+            normal_cutoff = cutoff / nyq
+            b, a = butter(order, normal_cutoff, btype='high', analog=False)
+            for i in self.Signals:
+                y = filtfilt(b, a, i.signalData)
+                i.channel.prefilter["HP"] = cutoff
+                i.signalData = y
+            self.fft()
+            self.stft()
+
+    def fft(self):
+        for i in self.Signals:
+            myFft = numpy.fft.fft(i.signalData)
+            i.freqData = numpy.abs(myFft)[:self.NSamples //2] / self.NSamples
+
+    def stft(self):
+        for i in self.Signals:
+            f, t, Zxx = stft(i.signalData, self.Freq)
+            i.stftData = [f, t, numpy.abs(Zxx)]
 
     def getDict(self):
         if self.init:
@@ -158,7 +200,8 @@ class Dataset:
                 "annotationTags" : self.AnnotationTags,
                 "annotations" : self.Annotations,
                 "epochs" : self.Epochs,
-                "signals" : []
+                "signals" : [],
+                "freqs" : self.Freqs.tolist()
             }
             for i in self.Signals:
                 return_dict["signals"].append(i.getDict())
@@ -182,7 +225,8 @@ class Dataset:
                 "annotationTags" : self.AnnotationTags,
                 "annotations" : self.Annotations,
                 "epochs" : self.Epochs,
-                "signals" : []
+                "signals" : [],
+                "freqs" : self.Freqs.tolist()
             }
             for i in self.Signals:
                 return_dict["signals"].append(i.getDictNoSignal())
@@ -237,8 +281,7 @@ class Header:
                      'patientcode': self.patientcode,
                      'equipment': self.equipment,
                      'admincode': self.admincode,
-                     'gender': self.gender,
-
+                     'gender': self.gender
         }
         try:
             self.Header['startdate'] = self.startdate.strftime("%m/%d/%Y, %H:%M:%S")
@@ -309,17 +352,24 @@ class Signal:
     def __init__(self, _channel, _signalData):
         self.channel = _channel
         self.signalData = _signalData
+        self.freqData = []
+        self.stftData = []
 
     def getDict(self):
+        stftData = [self.stftData[0].tolist(), self.stftData[1].tolist(), self.stftData[2].tolist()]
         return {
             "channel" : self.channel.getDict(),
-            "signalData" : self.signalData.tolist()
+            "signalData" : self.signalData.tolist(),
+            "freqData" : self.freqData.tolist(),
+            "stftData" : stftData
         }
 
     def getDictNoSignal(self):
         return {
             "channel" : self.channel.getDict(),
-            "signalData" : []
+            "signalData" : [],
+            "freqData" : [],
+            "stftData" : []
         }
 
 

@@ -1,11 +1,11 @@
-from pyEEG.Models.Data import Dataset
+from pyEEG.Models import Data
 from pyEEG.Utils.Extensions import importEdf
 import uuid
-import pyedflib, os, pathlib
+import pyedflib, os, pathlib, datasets
 
 class Analysis:
     def __init__(self, _name, _dataset):
-        self.name = _name
+        _dataset.Name = _name
         self.dataset = _dataset
 
     def getDict(self):
@@ -13,6 +13,16 @@ class Analysis:
 
     def getDictNoSignal(self):
         return self.dataset.getDictNoSignal()
+
+    @staticmethod
+    def createTestAnalysis(): #just for development
+        ROOT_DIR = os.path.dirname(datasets.__file__)
+        FILE_NAME = "S001R03.edf"
+        dataset_path = os.path.join(ROOT_DIR, FILE_NAME)
+        f = FileManager.importEdf(dataset_path)
+        d = Data.Dataset(f)
+        d.initialize()
+        return Analysis("test_set", d)
 
 class FileManager:
     last_created = 0
@@ -34,22 +44,23 @@ class FileManager:
 
 
 
+
 class StateMessages:
 
     @staticmethod
-    def success():
+    def success(msg="", data={}):
         success = {
             "result" : "success",
-            "msg" : "",
-            "custom" : ""
+            "msg" : msg,
+            "custom" : data
         }
         return success
 
     @staticmethod
-    def fail():
+    def fail(msg="", data={}):
         fail = {
             "result" : "fail",
-            "msg" : "",
-            "custom" : ""
+            "msg" : msg,
+            "custom" : data
         }
         return fail

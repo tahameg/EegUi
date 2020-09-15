@@ -1,0 +1,145 @@
+{%extends "base.html" %}
+{% block content %}
+<section class="content-header">
+  <div class="row" style="margin-left:15vw; margin-right:15vw;">
+    <div class="col-6">
+      <h1>Çalışma Alanı</h1>
+    </div>
+    <div class="col-6 ">
+      <h4 id="file-directory" class="float-right">home/file</h4>
+    </div>
+  </div>
+</section>
+
+<section class="content-body">
+  <div class="col-12">
+    <div class="card card-primary card-tabs">
+      <div class="card-header p-0 pt-1">
+        <ul class="nav nav-tabs" id="workbench-tabs" role="tablist">
+          <li class="pt-2 px-3">
+            <h3 class="card-title">Analiz</h3>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" id="time-1-tab" data-toggle="pill" href="#time-1-home" role="tab" aria-controls="time-1-home" aria-selected="true">Zaman Domeni</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="fft-tab" data-toggle="pill" href="#fft-home" role="tab" aria-controls="fft-tab" aria-selected="false">FFT</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="stft-tab" data-toggle="pill" href="#stft-home" role="tab" aria-controls="stft-home" aria-selected="false">STFT</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="tools-tab" data-toggle="pill" href="#tools-home" role="tab" aria-controls="tools-home" aria-selected="false">Araçlar</a>
+          </li>
+        </ul>
+      </div>
+      <div class="card-body">
+        <div class="tab-content" id="workbench-tabsContent">
+          <div class="tab-pane fade show active" id="time-1-home" role="tabpanel" aria-labelledby="time-1-tab">
+            <div class="col-12" id="time-plot-1">
+            </div>
+            <div class="col-12">
+              <p style="margin-top: 5vh;">
+              </p>
+              <div class="input-group-prepend">
+                <button id="time-select" type="button" class="btn btn-warning">
+                  Göster
+                </button>
+                <button type="button" id="time-back-all" class="btn btn-info">Hepsi
+                </button>
+                <select id="select-channel-for-time" class="custom-select">
+                  <option value="-1">Bir kanal seçin</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="fft-home" role="tabpanel" aria-labelledby="fft-tab">
+            <div class="col-12" id="fft-plot-1">
+            </div>
+            <div class="col-12">
+              <div class="input-group-prepend">
+                <button id="fft-select" type="button" class="btn btn-warning">
+                  Göster
+                </button>
+                <select id="select-channel-for-fft" class="custom-select">
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="stft-home" role="tabpanel" aria-labelledby="stft tab">
+            <div class="col-12" id="stft-plot-1" style="width:80%; margin:0 auto; padding:20px;">
+            </div>
+            <div class="col-12">
+              <div class="input-group-prepend">
+                <button id="stft-select" type="button" class="btn btn-warning">
+                  Göster
+                </button>
+                <select id="select-channel-for-stft" class="custom-select">
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="tools-home" role="tabpanel" aria-labelledby="tools-tab">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">High-Pass Filtre</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form role="form">
+                <div class="card-body">
+                  <div class="form-group">
+                    <code id="filter-warning-high"></code>
+                    <div class="input-group ">
+                      <label for="highpass-field">Hedef Frekans</label>
+                      <input type="number" class="form-control" id="highpass-field" placeholder="High Pass Filter" value="0">
+                      <div class="input-group-append">
+                        <span class="input-group-text"><i>Hz</i></span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.card-body -->
+                  <div class="card-footer">
+                    <button type="button" id="apply-high-filter" class="btn btn-primary">Uygula</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+
+
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Low-Pass Filtre</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form role="form">
+              <div class="card-body">
+                <div class="form-group">
+                  <code id="filter-warning-low"></code>
+                  <div class="input-group ">
+                    <label for="lowpass-field">Hedef Frekans</label>
+                    <input type="number" class="form-control" id="lowpass-field" placeholder="Lowpass Pass Filter" value="150">
+                    <div class="input-group-append">
+                      <span class="input-group-text"><i>Hz</i></span>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <button type="button" id="apply-low-filter" class="btn btn-primary">Uygula</button>
+                </div>
+            </form>
+          </div>
+        </div>
+
+
+      </div>
+      <!-- /.card -->
+    </div>
+  </div>
+</section>
+{% endblock %}
