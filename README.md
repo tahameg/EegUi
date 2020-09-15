@@ -27,6 +27,11 @@ Go to the root folder
 
      source venv/bin/activate
 
+ Install Dependencies
+
+     pip -r requirements.txt
+
+
 Run the app
 	   
     python app.py
