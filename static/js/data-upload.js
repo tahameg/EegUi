@@ -3,16 +3,6 @@ $(document).ready(function() {
   var contentPrefix = "channel-content-";
   var theData = null;// bu değişken daha sonra sayfadaki değişikliklerle güncellenecek ve
   //ve server bu veriye göre kendisini güncelleyecek
-  $("#confirm-button").click(function() {
-    $.ajax({
-      url: '/workbench',
-      success: function(result) {
-        console.log("I did my job!");
-      },
-      async: false
-    });
-  });
-
 
 
   $("#file-upload-form").find("#upload-button").click(function() {
